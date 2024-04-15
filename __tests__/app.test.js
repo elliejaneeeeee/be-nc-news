@@ -55,4 +55,54 @@ describe('/api', () => {
         })
     })
 
-    
+describe('/api/articles/:article_id', () => {
+    test('GET 200: responds with an article object in the correct format', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+            const {article} = body
+            expect(typeof article).toBe('object')
+            expect(typeof article[0].article_id).toBe('number')
+            expect(typeof article[0].title).toBe('string')
+            expect(typeof article[0].topic).toBe('string')
+            expect(typeof article[0].author).toBe('string')
+            expect(typeof article[0].body).toBe('string')
+            expect(typeof article[0].created_at).toBe('string')
+            expect(typeof article[0].votes).toBe('number')
+            expect(typeof article[0].article_img_url).toBe('string')
+        })
+    })
+    test('GET 200: responds with an article object with the correct properties', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+            const {article} = body
+            expect(article[0].article_id).toBe(1)
+            expect(article[0].title).toBe('Living in the shadow of a great man')
+            expect(article[0].topic).toBe('mitch')
+            expect(article[0].author).toBe('butter_bridge')
+            expect(article[0].body).toBe('I find this existence challenging')
+            expect(article[0].created_at).toBe('2020-07-09T20:11:00.000Z')
+            expect(article[0].votes).toBe(100)
+            expect(article[0].article_img_url).toBe('https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700')
+        })
+    })
+    test('GET 404: should respond with a 404 error when resource does not exist', () => {
+        return request(app)
+        .get('/api/articles/9999')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource Doesn't exist")
+        })
+    })
+    test('GET 400: should respond with a 400 error when the parameter syntax is invalid', () => {
+        return request(app)
+        .get('/api/articles/not-an-id')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("400 Bad Request: Invalid Id")
+        })
+    })
+})
