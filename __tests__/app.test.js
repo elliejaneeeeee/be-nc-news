@@ -19,11 +19,22 @@ describe('/api/topics', () => {
         .get('/api/topics')
         .expect(200)
         .then(({body}) => {
-            const topics = body
+            const {topics} = body
+
             topics.forEach((topic) => {
                 expect(typeof topic.slug).toBe('string')
                 expect(typeof topic.description).toBe('string')
             })
+        })
+    })
+    test('GET 200: responds with an array of all topics', () => {
+        return request(app)
+        .get('/api/topics')
+        .expect(200)
+        .then(({body}) => {
+            const {topics} = body
+            
+            expect(topics.length).toBe(3)
         })
     })
     test('GET 404: responds with a 404 error when path is not found', () => {
