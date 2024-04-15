@@ -46,5 +46,13 @@ describe('/api', () => {
             })
         })
     })
+    test('GET 404: responds with a 404 error when path is not found', () => {
+        return request(app)
+        .get('/ape')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('404 Error: Path not found')
+        })
+    })
 
     
