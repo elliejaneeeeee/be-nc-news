@@ -3,6 +3,9 @@ const app = express()
 const endpoints = require('./endpoints.json')
 
 const { getTopics, getArticles, getArticleById, getCommentsByArticleId } = require('./controller/get.controller')
+const { postCommentByArticleId } = require('./controller/post.contoller')
+
+app.use(express.json())
 
 app.get('/api/topics', getTopics)
 
@@ -15,6 +18,8 @@ app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id', getArticleById)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
+
+app.post('/api/articles/:article_id/comments', postCommentByArticleId)
 
 
 
@@ -36,7 +41,12 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
     if (err.code === '22P02') {
         res.status(400).send({msg: '400 Bad Request: Invalid Id'})
-    } else {
+    } else if (err.code === '23502') {
+        res.status(400).send({msg: '400 Bad Request: missing/malformed fields'})
+    } else if (err.code === '23503') {
+        res.status(404).send({msg: "404 Error: Resource doesn't exist"})
+    }
+    else {
         next(err)
     }
 })
