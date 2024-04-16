@@ -13,6 +13,7 @@ afterAll(() => {
     db.end()
 })
 
+
 describe('/api/topics', () => {
     test('GET 200: responds with an array of all topics in the correct format', () => {
         return request(app)
@@ -39,6 +40,7 @@ describe('/api/topics', () => {
     })
 })
 
+
 describe('/api', () => {
     test('GET 200: responds with an object describing all of the available endpoints', () => {
         return request(app)
@@ -57,6 +59,7 @@ describe('/api', () => {
             expect(body.msg).toBe('404 Error: Path not found')
         })
     })
+
 
 describe('/api/articles/:article_id', () => {
     test('GET 200: responds with an article object in the correct format', () => {
@@ -110,6 +113,7 @@ describe('/api/articles/:article_id', () => {
     })
 })
 
+
 describe('/api/articles', () => {
     test('GET 200: responds with an array of articles in the correct format', () => {
         return request(app)
@@ -142,6 +146,7 @@ describe('/api/articles', () => {
         })
     })
 })
+
 
 describe('/api/articles/:article_id/comments', () => {
     test('GET 200: responds with an array of comments for the specified article id', () => {
@@ -191,8 +196,49 @@ describe('/api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('400 Bad Request: Invalid Id')
         })
     })
-})
+    test('POST 201: responds with the a named object containing the posted comment', () => {
+        const input = {
+            //Presumably the user would have to have an account before posting, so i used an already existing user
+            //Please let me know if this is correct in the feedback!
+            username: 'lurker',
+            body: 'Cool article!'
+        }
 
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send(input)
+        .expect(201)
+        .then(({body}) => {
+            expect(body.comment).toEqual({author: 'lurker', body: 'Cool article!'})
+            expect(body.comment).toBeObject()
+        })
+    })
+    test('POST 400: responds with a 400 error when there are missing/malformed fields', () => {
+        const input = {}
+
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send(input)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('400 Bad Request: missing/malformed fields')
+        })
+    })
+    test('POST 400: responds with a 404 error when the article_id doesnt exist', () => {
+        const input = {
+            username: 'lurker',
+            body: 'Cool article!'
+        }
+
+        return request(app)
+        .post('/api/articles/99999/comments')
+        .send(input)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource doesn't exist")
+        })
+    })
+})
 
 
 
