@@ -105,5 +105,17 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "serves a named object of the comment posted",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment": {
+          "author": "lurker",
+          "body": "Cool article!"
+        }
+      }
+    }
   }
 }
