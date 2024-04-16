@@ -1,4 +1,4 @@
-const {fetchTopics, fetchArticleById} = require('../models/get.model')
+const {fetchTopics, fetchArticles, fetchArticleById} = require('../models/get.model')
 
 
 exports.getTopics = (req, res, next) => {
@@ -8,6 +8,13 @@ exports.getTopics = (req, res, next) => {
     })
     .catch((err) => {
         next(err)
+    })
+}
+
+exports.getArticles = (req, res, next) => {
+    fetchArticles()
+    .then((articles) => {
+        res.status(200).send({articles})
     })
 }
 

@@ -37,14 +37,6 @@ describe('/api/topics', () => {
             expect(topics.length).toBe(3)
         })
     })
-    test('GET 404: responds with a 404 error when path is not found', () => {
-        return request(app)
-        .get('/api/topic')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.msg).toBe('404 Error: Path not found')
-        })
-    })
 })
 
 describe('/api', () => {
@@ -114,6 +106,60 @@ describe('/api/articles/:article_id', () => {
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe("400 Bad Request: Invalid Id")
+        })
+    })
+})
+
+describe('/api/articles', () => {
+    test('GET 200: responds with an array of all articles', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+            expect(articles.length).toBe(13)
+        })
+    })
+    test('GET 200: responds with an array on articles in the correct format', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+            articles.forEach((article) => {
+                expect(typeof article.article_id).toBe('number')
+                expect(typeof article.title).toBe('string')
+                expect(typeof article.topic).toBe('string')
+                expect(typeof article.author).toBe('string')
+                expect(typeof article.created_at).toBe('string')
+                expect(typeof article.votes).toBe('number')
+                expect(typeof article.article_img_url).toBe('string')
+                expect(typeof article.comment_count).toBe('number')
+                expect(article).not.toHaveProperty('body')
+            })
+        })
+    })
+    test('GET 200: articles should be sorted in descending order by date',() => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+            expect(articles).toBeSorted({key: 'created_at', descending: true})
+        })
+    })
+})
+
+
+
+
+describe('404: Path not found', () => {
+    test('GET 404: responds with a 404 error when path is not found', () => {
+        return request(app)
+        .get('/api/notapath')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('404 Error: Path not found')
         })
     })
 })
