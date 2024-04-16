@@ -29,3 +29,13 @@ exports.fetchArticleById = (article_id) => {
         return rows.length === 0 ? Promise.reject({status:404, msg: "404 Error: Resource Doesn't exist"}) : rows
     })
 }
+
+exports.fetchCommentsByArticleId = (article_id) => {
+    return db.query(`
+    SELECT * FROM comments
+    WHERE comments.article_id=$1
+    ORDER BY created_at ASC`, [article_id])
+    .then(({rows}) => {
+        return rows.length === 0 ? Promise.reject({status:404, msg: "404 Error: Resource doesn't exist"}) : rows
+    })
+}
