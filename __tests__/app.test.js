@@ -150,6 +150,57 @@ describe('/api/articles', () => {
     })
 })
 
+describe('/api/articles/:article_id/comments', () => {
+    test('GET 200: responds with an array of comments for the specified article id', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) => {
+            const {comments} = body
+            expect(comments.length).toBe(11)
+        })
+    })
+    test('GET 200: responds with an array of comments sorted by most recent first', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) => {
+            const {comments} = body
+            expect(comments).toBeSortedBy('created_at')
+        })
+    })
+    test('GET 200: responds with an array of comments with the correct properties', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) => {
+            const {comments} = body
+            expect(comments[0]).toHaveProperty('comment_id')
+            expect(comments[0]).toHaveProperty('votes')
+            expect(comments[0]).toHaveProperty('created_at')
+            expect(comments[0]).toHaveProperty('author')
+            expect(comments[0]).toHaveProperty('article_id')
+        })
+    })
+    test('GET 404: responds with a 404 error message of not found when an invalid id is specified', () => {
+        return request(app)
+        .get('/api/articles/9999/comments')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource doesn't exist")
+        })
+    })
+    test('GET 400: responds with a 400 error message of bad request when the specified id has a syntax error', () => {
+        return request(app)
+        .get('/api/articles/notAnId/comments')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('400 Bad Request: Invalid Id')
+        })
+    })
+})
+
+
 
 
 

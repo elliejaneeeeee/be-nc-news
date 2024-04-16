@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const endpoints = require('./endpoints.json')
 
-const { getTopics, getArticles, getArticleById } = require('./controller/get.controller')
+const { getTopics, getArticles, getArticleById, getCommentsByArticleId } = require('./controller/get.controller')
 
 app.get('/api/topics', getTopics)
 
@@ -13,6 +13,8 @@ app.get('/api', (req, res) => {
 app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id', getArticleById)
+
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 
 
 
