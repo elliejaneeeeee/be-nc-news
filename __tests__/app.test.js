@@ -111,21 +111,15 @@ describe('/api/articles/:article_id', () => {
 })
 
 describe('/api/articles', () => {
-    test('GET 200: responds with an array of all articles', () => {
+    test('GET 200: responds with an array of articles in the correct format', () => {
         return request(app)
         .get('/api/articles')
         .expect(200)
         .then(({body}) => {
             const {articles} = body
+            console.log(body)
+
             expect(articles.length).toBe(13)
-        })
-    })
-    test('GET 200: responds with an array on articles in the correct format', () => {
-        return request(app)
-        .get('/api/articles')
-        .expect(200)
-        .then(({body}) => {
-            const {articles} = body
             articles.forEach((article) => {
                 expect(typeof article.article_id).toBe('number')
                 expect(typeof article.title).toBe('string')
