@@ -10,6 +10,7 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
     ($1, $2, $3, $4)
     RETURNING author, body;`, [body, username, article_id, created_at] )
     .then(({rows}) => {
-        return rows
+        const [comment] = rows
+        return comment
     })
 }

@@ -5,8 +5,7 @@ exports.postCommentByArticleId = (req, res, next) => {
     const {username, body} = req.body
 
     insertCommentByArticleId(article_id, username, body)
-    .then((body) => {
-        const [comment] = body
+    .then((comment) => {
         res.status(201).send({comment})
     })
     .catch((err) => {
