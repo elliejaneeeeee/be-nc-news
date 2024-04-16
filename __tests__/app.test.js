@@ -198,8 +198,6 @@ describe('/api/articles/:article_id/comments', () => {
     })
     test('POST 201: responds with the a named object containing the posted comment', () => {
         const input = {
-            //Presumably the user would have to have an account before posting, so i used an already existing user
-            //Please let me know if this is correct in the feedback!
             username: 'lurker',
             body: 'Cool article!'
         }
@@ -211,6 +209,21 @@ describe('/api/articles/:article_id/comments', () => {
         .then(({body}) => {
             expect(body.comment).toEqual({author: 'lurker', body: 'Cool article!'})
             expect(body.comment).toBeObject()
+        })
+    })
+    test('POST 200: should ignore unnecessary properties in the input', () => {
+        const input = {
+            username: 'lurker',
+            body: 'Cool article!',
+            tagline: 'my cool comment'
+        }
+
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send(input)
+        .expect(201)
+        .then(({body}) => {
+            expect(body.comment).not.toHaveProperty('tagline')
         })
     })
     test('POST 400: responds with a 400 error when there are missing/malformed fields', () => {
@@ -232,6 +245,34 @@ describe('/api/articles/:article_id/comments', () => {
 
         return request(app)
         .post('/api/articles/99999/comments')
+        .send(input)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource doesn't exist")
+        })
+    })
+    test('POST 400: responds with a 404 error when the article_id has a syntax error', () => {
+        const input = {
+            username: 'lurker',
+            body: 'Cool article!'
+        }
+
+        return request(app)
+        .post('/api/articles/notAnId/comments')
+        .send(input)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("400 Bad Request: Invalid Id")
+        })
+    })
+    test("POST 404: responds with a 404 error when the username given doesn't exist", () => {
+        const input = {
+            username: 'username1',
+            body: 'Cool article!'
+        }
+
+        return request(app)
+        .post('/api/articles/1/comments')
         .send(input)
         .expect(404)
         .then(({body}) => {
