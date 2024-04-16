@@ -117,7 +117,6 @@ describe('/api/articles', () => {
         .expect(200)
         .then(({body}) => {
             const {articles} = body
-            console.log(body)
 
             expect(articles.length).toBe(13)
             articles.forEach((article) => {
