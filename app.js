@@ -9,19 +9,19 @@ const { getCommentsByArticleId, postCommentByArticleId, deleteCommentById } = re
 
 app.use(express.json())
 
-app.get('/api/topics', getTopics)
-
 app.get('/api', (req, res) => {
     res.status(200).send({endpoints})
 })
+
+app.get('/api/topics', getTopics)
+
+app.get('/api/users', getAllUsers)
 
 app.get('/api/articles', getArticles)
 
 app.get('/api/articles/:article_id', getArticleById)
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
-
-app.get('/api/users', getAllUsers)
 
 app.post('/api/articles/:article_id/comments', postCommentByArticleId)
 

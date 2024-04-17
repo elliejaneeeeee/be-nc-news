@@ -444,6 +444,49 @@ describe('GET: /api/users', () => {
         })
     })
 })
+
+describe('GET /api/articles with topic query', () => {
+    test('GET 200: responds with an array of articles matching the specified topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+
+            expect(articles.length).toBe(1)
+            articles.forEach((article) => {
+                expect(article.topic).toBe('cats')
+            })
+        })
+    })
+    test('GET 200: responds with an array of all articles when no topic is specified', () => {
+        return request(app)
+        .get('/api/articles?topic=')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+            
+            expect(articles.length).toBe(13)
+        })
+    })
+    test('GET 404: responds with a 404 error when the topic query does not exist', () => {
+        return request(app)
+        .get('/api/articles?topic=IDontExist')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource doesn't exist")
+        })
+    })
+    test('GET 200: responds with a 200 error when the topic query does exist but there are no entries', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual({"articles": []})
+        })
+    })
+})
+
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
