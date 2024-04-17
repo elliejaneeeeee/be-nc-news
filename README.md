@@ -9,15 +9,15 @@ It provides API endpoints, and makes use of a *PostgreSQL* database to store and
 
 ## Setup  
 
-**Clone**  
+### **Clone**  
 *Clone* the repo  
 `git clone https://github.com/elliejaneeeeee/be-nc-news.git`  
 
-**Install Dependencies**  
+### **Install Dependencies**  
 Navigate to the project directory and run:  
 `npm install`  
 
-**Seed Local Database**  
+### **Seed Local Database**  
 Before seeding, create two files with the necessary database connections. [^1]  
 
 .env.development  
