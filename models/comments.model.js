@@ -1,4 +1,6 @@
 const db = require('../db/connection')
+const format = require('pg-format')
+const {checkExists} = require('../db/seeds/utils')
 
 exports.fetchCommentsByArticleId = (article_id) => {
     return db.query(`
@@ -24,3 +26,16 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
         return comment
     })
 }
+
+exports.fetchCommentById = (comment_id) => {
+    return checkExists('comments', 'comment_id', comment_id)
+    .then(() => {
+        const SQLStr = format(`
+        DELETE FROM comments
+        WHERE comment_id = $1;`)
+    
+        return db.query(SQLStr, [comment_id])
+    })
+    
+}
+

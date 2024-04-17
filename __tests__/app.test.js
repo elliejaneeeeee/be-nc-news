@@ -49,7 +49,6 @@ describe('/api', () => {
             expect(body).toEqual({endpoints})
             })
         })
-    })
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
         .get('/ape')
@@ -58,6 +57,7 @@ describe('/api', () => {
             expect(body.msg).toBe('404 Error: Path not found')
         })
     })
+})
 
 
 describe('GET: /api/articles/:article_id', () => {
@@ -332,7 +332,7 @@ describe('PATCH: /api/articles/:article_id', () => {
             expect(body).toEqual({article})
         })
     })
-    test('PATCH 404: reponds with a 404 error when the article with the specified ID cannot be found', () => {
+    test("PATCH 404: should respond with a status 404 for an valid comment id that doesn't exist", () => {
         const input = {
             inc_votes: -10
         }
@@ -358,15 +358,15 @@ describe('PATCH: /api/articles/:article_id', () => {
             expect(body.msg).toEqual("400 Bad Request: Invalid Id")
         })
     })
-    test('PATCH 404: reponds with a 404 error when the field body is empty', () => {
+    test('PATCH 400: reponds with a 400 error when the field body is empty', () => {
         const input = {}
 
         return request(app)
-        .patch('/api/articles/invalidId')
+        .patch('/api/articles/1')
         .send(input)
         .expect(400)
         .then(({body}) => {
-            expect(body.msg).toEqual("400 Bad Request: Invalid Id")
+            expect(body.msg).toEqual("400 Bad Request: missing/malformed fields")
         })
     })
     test('PATCH 404: reponds with a 404 error when the field body is an invalid value', () => {
@@ -383,6 +383,42 @@ describe('PATCH: /api/articles/:article_id', () => {
         })
     })
 })
+
+describe('DELETE: /api/comments/:comment_id', () => {
+    test('DELETE 204: should respond with a status 204 with no content', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+    })
+    test('DELETE 204: comment should be removed from the database', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then(() => {
+            return db.query(`SELECT * FROM comments WHERE comment_id=1`)
+        })
+        .then(({rows}) => {
+            expect(rows.length).toBe(0)
+        })
+    })
+    test('DELETE 400: should respond with a status 400 for an invalid comment id', () => {
+        return request(app)
+        .delete('/api/comments/invalidId')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("400 Bad Request: Invalid Id")
+        })
+    })
+    test("DELETE 404: should respond with a status 404 for an valid comment id that doesn't exist", () => {
+        return request(app)
+        .delete('/api/comments/999999')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource doesn't exist")
+        })
+    })
+})
+
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
@@ -393,3 +429,4 @@ describe('404: Path not found', () => {
         })
     })
 })
+
