@@ -26,7 +26,7 @@ Before seeding, create two files with the necessary database connections. [^1]
 .env.test  
 `PGDATABASE=nc_news_test`  
 
-**Run Tests**  
+### **Run Tests**  
 `npm test`  
 
 ## Minimum Versions  
