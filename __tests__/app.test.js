@@ -487,6 +487,18 @@ describe('GET /api/articles with topic query', () => {
     })
 })
 
+describe('GET /api/articles/:article_id', () => {
+    test('GET 200: responds with an array of articles matching the specified id including the comment count', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+            const {article} = body
+            expect(article[0]).toHaveProperty('comment_count')
+        })
+    })
+})
+
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
