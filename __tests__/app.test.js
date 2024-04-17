@@ -419,6 +419,31 @@ describe('DELETE: /api/comments/:comment_id', () => {
     })
 })
 
+describe('GET: /api/users', () => {
+    test('GET 200: responds with an array of all users', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            const {users} = body
+            expect(users.length).toBe(4)
+            expect(Array.isArray(users)).toBe(true)
+        })
+    })
+    test('GET 200: responds with an array of all users in the correct format', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            const {users} = body
+            users.forEach((user) => {
+                expect(typeof user.username).toBe('string')
+                expect(typeof user.name).toBe('string')
+                expect(typeof user.avatar_url).toBe('string')
+            })
+        })
+    })
+})
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
