@@ -40,7 +40,6 @@ describe('/api/topics', () => {
     })
 })
 
-
 describe('/api', () => {
     test('GET 200: responds with an object describing all of the available endpoints', () => {
         return request(app)
@@ -61,7 +60,7 @@ describe('/api', () => {
     })
 
 
-describe('/api/articles/:article_id', () => {
+describe('GET: /api/articles/:article_id', () => {
     test('GET 200: responds with an article object in the correct format', () => {
         return request(app)
         .get('/api/articles/1')
@@ -113,8 +112,7 @@ describe('/api/articles/:article_id', () => {
     })
 })
 
-
-describe('/api/articles', () => {
+describe('GET: /api/articles', () => {
     test('GET 200: responds with an array of articles in the correct format', () => {
         return request(app)
         .get('/api/articles')
@@ -147,8 +145,7 @@ describe('/api/articles', () => {
     })
 })
 
-
-describe('/api/articles/:article_id/comments', () => {
+describe('GET: /api/articles/:article_id/comments', () => {
     test('GET 200: responds with an array of comments for the specified article id', () => {
         return request(app)
         .get('/api/articles/1/comments')
@@ -196,6 +193,9 @@ describe('/api/articles/:article_id/comments', () => {
             expect(body.msg).toBe('400 Bad Request: Invalid Id')
         })
     })
+})
+
+describe('POST: /api/articles/:article_id/comments', () => {
     test('POST 201: responds with the a named object containing the posted comment', () => {
         const input = {
             username: 'lurker',
@@ -281,9 +281,108 @@ describe('/api/articles/:article_id/comments', () => {
     })
 })
 
+describe('PATCH: /api/articles/:article_id', () => {
+    test('PATCH 200: should respond with an object containing the updated article with incrementing votes', () => {
+        const input = {
+            inc_votes: 10
+        }
 
+        const article = {
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: '2020-07-09T20:11:00.000Z',
+            votes: 110,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          }
 
+        return request(app)
+        .patch('/api/articles/1')
+        .send(input)
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual({article})
+        })
+    })
+    test('PATCH 200: should respond with an object containing the updated article with decrementing votes', () => {
+        const input = {
+            inc_votes: -10
+        }
 
+        const article = {
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: '2020-07-09T20:11:00.000Z',
+            votes: 90,
+            article_img_url:
+              "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          }
+
+        return request(app)
+        .patch('/api/articles/1')
+        .send(input)
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual({article})
+        })
+    })
+    test('PATCH 404: reponds with a 404 error when the article with the specified ID cannot be found', () => {
+        const input = {
+            inc_votes: -10
+        }
+
+        return request(app)
+        .patch('/api/articles/999999999')
+        .send(input)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toEqual("404 Error: Resource doesn't exist")
+        })
+    })
+    test('PATCH 404: reponds with a 404 error when the article id is invalid', () => {
+        const input = {
+            inc_votes: -10
+        }
+
+        return request(app)
+        .patch('/api/articles/invalidId')
+        .send(input)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toEqual("400 Bad Request: Invalid Id")
+        })
+    })
+    test('PATCH 404: reponds with a 404 error when the field body is empty', () => {
+        const input = {}
+
+        return request(app)
+        .patch('/api/articles/invalidId')
+        .send(input)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toEqual("400 Bad Request: Invalid Id")
+        })
+    })
+    test('PATCH 404: reponds with a 404 error when the field body is an invalid value', () => {
+        const input = {
+            inc_votes: 'minus ten'
+        }
+
+        return request(app)
+        .patch('/api/articles/invalidId')
+        .send(input)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toEqual("400 Bad Request: Invalid Id")
+        })
+    })
+})
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
