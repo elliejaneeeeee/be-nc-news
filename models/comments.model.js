@@ -1,5 +1,15 @@
 const db = require('../db/connection')
 
+exports.fetchCommentsByArticleId = (article_id) => {
+    return db.query(`
+    SELECT * FROM comments
+    WHERE comments.article_id=$1
+    ORDER BY created_at ASC`, [article_id])
+    .then(({rows}) => {
+        return rows.length === 0 ? Promise.reject({status:404, msg: "404 Error: Resource doesn't exist"}) : rows
+    })
+}
+
 exports.insertCommentByArticleId = (article_id, username, body) => {
     const created_at = new Date()
 
