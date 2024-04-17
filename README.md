@@ -21,10 +21,10 @@ Navigate to the project directory and run:
 Before seeding, create two files with the necessary database connections. [^1]  
 
 .env.development  
-: `PGDATABASE=nc_news`
+`PGDATABASE=nc_news`
 
 .env.test  
-: `PGDATABASE=nc_news_test`  
+`PGDATABASE=nc_news_test`  
 
 **Run Tests**  
 `npm test`  
