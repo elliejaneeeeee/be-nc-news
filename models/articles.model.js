@@ -1,4 +1,5 @@
 const db = require('../db/connection')
+const format = require('pg-format')
 
 exports.fetchArticles = () => {
     return db.query(`
@@ -21,3 +22,21 @@ exports.fetchArticleById = (article_id) => {
     })
 }
 
+exports.updateArticleVotes = (article_id, votes) => {
+    const values = [votes, article_id]
+    const SQLString = format(
+        `UPDATE articles 
+        SET votes = votes + $1 
+        WHERE article_id = $2 
+        RETURNING *;`
+    )
+
+    return db.query(SQLString, values)
+    .then(({rows}) => {
+        if (rows.length === 0) {
+            return Promise.reject({status: 404, msg: "404 Error: Resource doesn't exist"})
+        }
+        const [updatedArticle] = rows
+        return updatedArticle
+    })
+}
