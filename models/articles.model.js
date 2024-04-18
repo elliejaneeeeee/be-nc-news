@@ -1,8 +1,11 @@
 const db = require('../db/connection')
 const format = require('pg-format')
 
-exports.fetchArticlesWithCommentCount = (topic) => {
-    const validQueries = ['cats', 'paper', 'mitch', 'coding', 'football', 'cooking']
+exports.fetchArticlesWithCommentCount = (topic, order = 'desc', sort_by = 'created_at') => {
+
+    const validQueries = ['cats', 'paper', 'mitch', 'coding', 'football', 'cooking', 
+    'desc', 'asc', 'DESC', 'ASC', 
+    'created_at', 'title', 'author', 'body', 'created_at', 'topic', 'votes']
 
     let SQLStr = `
     SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, 
@@ -14,13 +17,15 @@ exports.fetchArticlesWithCommentCount = (topic) => {
         SQLStr += `WHERE articles.topic = '${topic}' `
     } else if (!topic) {
         SQLStr += `WHERE articles.topic IS NOT NULL`
+    } else if (!validQueries.includes(sort_by) || !validQueries.includes(order)) {
+        return Promise.reject({status: 404, msg: "404 Error: Resource doesn't exist"})
     } else {
         return Promise.reject({status: 404, msg: "404 Error: Resource doesn't exist"})
     }
 
     SQLStr += `
     GROUP BY articles.article_id 
-    ORDER BY created_at DESC;`
+    ORDER BY ${sort_by} ${order};`
 
     return db.query(SQLStr)
     .then(({rows}) => {

@@ -1,10 +1,11 @@
+const { sort } = require('../db/data/test-data/articles')
 const {fetchArticlesWithCommentCount, fetchArticleById, updateArticleVotes} = require('../models/articles.model')
 
 
 exports.getArticles = (req, res, next) => {
-    const {topic} = req.query
+    const {topic, order, sort_by} = req.query
 
-    fetchArticlesWithCommentCount(topic)
+    fetchArticlesWithCommentCount(topic, order, sort_by)
     .then((articles) => {
         res.status(200).send({articles})
     })
