@@ -1,30 +1,10 @@
 const express = require('express')
 const app = express()
-const endpoints = require('./endpoints.json')
 
-const { getTopics } = require('./controller/topics.controller')
-const { getAllUsers } = require('./controller/users.controller')
-const { getArticles, getArticleById, updateArticleById } = require('./controller/articles.controller')
-const { getCommentsByArticleId, postCommentByArticleId, removeCommentById } = require('./controller/comments.controller')
+const apiRouter = require('./routes/api-router')
 
 app.use(express.json())
-
-app.get('/api', (req, res) => {
-    res.status(200).send({endpoints})
-})
-app.get('/api/topics', getTopics)
-app.get('/api/users', getAllUsers)
-app.get('/api/articles', getArticles)
-app.get('/api/articles/:article_id', getArticleById)
-app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
-
-app.post('/api/articles/:article_id/comments', postCommentByArticleId)
-
-app.patch('/api/articles/:article_id', updateArticleById)
-
-app.delete('/api/comments/:comment_id', removeCommentById)
-
-
+app.use('/api', apiRouter)
 
 //Invalid route handling
 app.all('*', (req, res) => {
@@ -55,6 +35,7 @@ app.use((err, req, res, next) => {
 })
 //Internal Server Error
 app.use((err, req, res, next) => {
+    console.log(err)
     res.status(500).send({msg: 'Internal server error'})
 })
 
