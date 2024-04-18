@@ -427,7 +427,6 @@ describe('GET: /api/users', () => {
         .then(({body}) => {
             const {users} = body
             expect(users.length).toBe(4)
-            expect(Array.isArray(users)).toBe(true)
         })
     })
     test('GET 200: responds with an array of all users in the correct format', () => {
@@ -477,7 +476,7 @@ describe('GET /api/articles with topic query', () => {
             expect(body.msg).toBe("404 Error: Resource doesn't exist")
         })
     })
-    test('GET 200: responds with a 200 error when the topic query does exist but there are no entries', () => {
+    test('GET 200: responds with an empty array when the topic query does exist but there are no entries', () => {
         return request(app)
         .get('/api/articles?topic=paper')
         .expect(200)
