@@ -13,6 +13,24 @@ afterAll(() => {
     db.end()
 })
 
+describe('/api', () => {
+    test('GET 200: responds with an object describing all of the available endpoints', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toEqual({endpoints})
+            })
+        })
+    test('GET 404: responds with a 404 error when path is not found', () => {
+        return request(app)
+        .get('/ape')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('404 Error: Path not found')
+        })
+    })
+})
 
 describe('/api/topics', () => {
     test('GET 200: responds with an array of all topics in the correct format', () => {
@@ -39,26 +57,6 @@ describe('/api/topics', () => {
         })
     })
 })
-
-describe('/api', () => {
-    test('GET 200: responds with an object describing all of the available endpoints', () => {
-        return request(app)
-        .get('/api')
-        .expect(200)
-        .then(({body}) => {
-            expect(body).toEqual({endpoints})
-            })
-        })
-    test('GET 404: responds with a 404 error when path is not found', () => {
-        return request(app)
-        .get('/ape')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.msg).toBe('404 Error: Path not found')
-        })
-    })
-})
-
 
 describe('GET: /api/articles/:article_id', () => {
     test('GET 200: responds with an article object in the correct format', () => {
