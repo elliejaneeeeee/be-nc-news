@@ -53,6 +53,8 @@ app.use((err, req, res, next) => {
         res.status(400).send({msg: '400 Bad Request: missing/malformed fields'})
     } else if (err.code === '23503') {
         res.status(404).send({msg: "404 Error: Resource doesn't exist"})
+    } else if (err.code === '42601') {
+        res.status(400).send({ msg: "400 Error: Invalid query" })
     }
     else {
         next(err)
