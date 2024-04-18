@@ -498,6 +498,44 @@ describe('GET /api/articles/:article_id', () => {
     })
 })
 
+describe('FEATURE REQ /api/articles', () => {
+    test('GET 200: responds with an array of all articles sorted by the specified query', () => {
+        return request(app)
+        .get('/api/articles?sort_by=votes')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+            expect(articles).toBeSorted( { key: 'votes', descending: true } )
+        })
+    })
+    test('GET 200: responds with an array of all articles sorted by date in the order specified', () => {
+        return request(app)
+        .get('/api/articles?order=asc')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+            expect(articles).toBeSorted({ key: 'created_at', descending: false })
+        })
+    })
+    test('GET 200: responds with an array sorted and ordered by the queries specified', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&&order=asc')
+        .expect(200)
+        .then(({body}) => {
+            const {articles} = body
+            expect(articles).toBeSorted( {key: 'author', descending: false} )
+        })
+    })
+    test('GET 400: responds with a 400 error when either query is invalid', () => {
+        return request(app)
+        .get('/api/articles?sort_by=notAQuery&&order=notAQuery')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("400 Error: Invalid query")
+        })
+    })
+})
+
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
