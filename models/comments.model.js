@@ -27,7 +27,7 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
     })
 }
 
-exports.fetchCommentById = (comment_id) => {
+exports.deleteCommentById = (comment_id) => {
     return checkExists('comments', 'comment_id', comment_id)
     .then(() => {
         const SQLStr = format(`
