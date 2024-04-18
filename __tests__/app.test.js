@@ -427,7 +427,6 @@ describe('GET: /api/users', () => {
         .then(({body}) => {
             const {users} = body
             expect(users.length).toBe(4)
-            expect(Array.isArray(users)).toBe(true)
         })
     })
     test('GET 200: responds with an array of all users in the correct format', () => {
