@@ -1,6 +1,7 @@
 const db = require('../db/connection')
 const format = require('pg-format')
 const {checkExists} = require('../db/seeds/utils')
+const { includes } = require('../db/data/test-data/articles')
 
 exports.fetchCommentsByArticleId = (article_id) => {
     return db.query(`
@@ -39,3 +40,18 @@ exports.deleteCommentById = (comment_id) => {
     
 }
 
+exports.updateCommentById = (comment_id, inc_votes) => {
+    const sqlStr = format(
+        `UPDATE %I 
+        SET %I = votes + $1 
+        WHERE %I = $2 
+        RETURNING *;`,
+        'comments', 'votes', 'comment_id'
+    )
+
+    return db.query(sqlStr, [inc_votes, comment_id])
+    .then(({rows}) => {
+        const [comment] = rows
+        return rows.length === 0 ? Promise.reject({status:404, msg: "404 Error: Resource doesn't exist"}) : comment
+    })
+}
