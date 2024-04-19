@@ -25,14 +25,14 @@ exports.formatComments = (comments, idLookup) => {
 };
 
 exports.checkExists = (table, column, value) => {
-  const SQLStr = format(
+  const sqlStr = format(
     `SELECT *
     FROM %I
     WHERE %I = $1;`,
     table, column
   )
 
-  return db.query(SQLStr, [value])
+  return db.query(sqlStr, [value])
   .then((dbOutput) => {
     if (dbOutput.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "404 Error: Resource doesn't exist"})

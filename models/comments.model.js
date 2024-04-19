@@ -30,11 +30,11 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
 exports.deleteCommentById = (comment_id) => {
     return checkExists('comments', 'comment_id', comment_id)
     .then(() => {
-        const SQLStr = format(`
+        const sqlStr = format(`
         DELETE FROM comments
         WHERE comment_id = $1;`)
     
-        return db.query(SQLStr, [comment_id])
+        return db.query(sqlStr, [comment_id])
     })
     
 }
