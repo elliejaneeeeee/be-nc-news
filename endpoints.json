@@ -163,5 +163,19 @@
           "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
         }
     }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "serves a comment object containing the updated votes",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 3,
+        "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+        "article_id": 1,
+        "author": "icellusedkars",
+        "votes": 110,
+        "created_at": "2020-03-01T01:13:00.000Z"
+      }
+    }
   }
 }

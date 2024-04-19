@@ -567,6 +567,94 @@ describe('/api/users/:username', () => {
     })
 })
 
+describe('/api/comments/:comment_id', () => {
+    test('GET 200: responds with the updated comment with incrementing votes', () => {
+        const updatedComment = {
+            comment_id: 3,
+            body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+            votes: 110,
+            author: "icellusedkars",
+            article_id: 1,
+            created_at: "2020-03-01T01:13:00.000Z",
+        }
+        const input = {
+            inc_votes: 10
+        }
+        return request(app)
+        .patch('/api/comments/3')
+        .send(input)
+        .expect(200)
+        .then(({body}) => {
+            const {comment} = body
+            expect(comment).toEqual(updatedComment)
+        })
+    })
+    test('GET 200: responds with the updated comment with decrementing votes', () => {
+        const updatedComment = {
+            comment_id: 3,
+            body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+            votes: 90,
+            author: "icellusedkars",
+            article_id: 1,
+            created_at: "2020-03-01T01:13:00.000Z",
+        }
+        const input = {
+            inc_votes: -10
+        }
+        return request(app)
+        .patch('/api/comments/3')
+        .send(input)
+        .expect(200)
+        .then(({body}) => {
+            const {comment} = body
+            expect(comment).toEqual(updatedComment)
+        })
+    })
+    test('GET 400: responds with a 400 status code when the comment id is of invalid syntax', () => {
+        const input = {
+            inc_votes: 10
+        }
+        return request(app)
+        .patch('/api/comments/notAnId')
+        .send(input)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("400 Bad Request: Invalid Id")
+        })
+    })
+    test('GET 404: responds with a 404 status code when the comment id is valid but cannot be found in db', () => {
+        const input = {
+            inc_votes: 10
+        }
+        return request(app)
+        .patch('/api/comments/9999999')
+        .send(input)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource doesn't exist")
+        })
+    })
+    test('GET 400: responds with a 400 error when the body is invalid', () => {
+        const input = {
+            inc_votes: 'cat'
+        }
+        return request(app)
+        .patch('/api/comments/3')
+        .send(input)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("400 Bad Request: Invalid Id")
+        })
+    })
+    test('GET 400: responds with a 400 error when the body is empty', () => {
+        return request(app)
+        .patch('/api/comments/3')
+        .send({})
+        .then(({body}) => {
+            expect(body.msg).toBe("400 Bad Request: missing/malformed fields")
+        })
+    })
+})
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
