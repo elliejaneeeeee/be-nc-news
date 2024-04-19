@@ -534,6 +534,39 @@ describe('FEATURE REQ /api/articles', () => {
     })
 })
 
+describe('/api/users/:username', () => {
+    test('GET 200: responds with a user object', () => {
+        return request(app)
+        .get('/api/users/lurker')
+        .expect(200)
+        .then(({body}) => {
+            expect(body).toBeObject()
+            expect(body.user).toHaveProperty('username')
+            expect(body.user).toHaveProperty('avatar_url')
+            expect(body.user).toHaveProperty('name')
+        })
+    })
+    test('GET 200: responds with the correct users object', () => {
+        return request(app)
+        .get('/api/users/lurker')
+        .expect(200)
+        .then(({body}) => {
+            const {user} = body
+            expect(user.username).toBe('lurker')
+            expect(user.name).toBe('do_nothing')
+            expect(user.avatar_url).toBe('https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png')
+        })
+    })
+    test('GET 404: responds with a status 404 when the username cannot be found', () => {
+        return request(app)
+        .get('/api/users/not4User')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404 Error: Resource doesn't exist")
+        })
+    })
+})
+
 describe('404: Path not found', () => {
     test('GET 404: responds with a 404 error when path is not found', () => {
         return request(app)
