@@ -1,10 +1,12 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 
 const apiRouter = require('./routes/api-router')
 
 app.use(express.json())
 app.use('/api', apiRouter)
+app.use(cors())
 
 //Invalid route handling
 app.all('*', (req, res) => {
