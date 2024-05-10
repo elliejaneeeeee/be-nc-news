@@ -15,7 +15,6 @@ exports.fetchCommentsByArticleId = (article_id) => {
 
 exports.insertCommentByArticleId = (article_id, username, body) => {
     const created_at = new Date()
-
     return db.query(`
     INSERT INTO comments
     (body, author, article_id, created_at)

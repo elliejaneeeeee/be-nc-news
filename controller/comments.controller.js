@@ -44,8 +44,6 @@ exports.patchCommentById = (req, res, next) => {
 
     updateCommentById(comment_id, inc_votes)
     .then((comment) => {
-
-        console.log({comment})
         res.status(200).send({comment})
     })
     .catch((err) => {
